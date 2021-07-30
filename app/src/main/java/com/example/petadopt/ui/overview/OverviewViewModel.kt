@@ -1,7 +1,8 @@
 package com.example.petadopt.ui.overview
 
+import android.util.Log
 import androidx.lifecycle.*
-import com.example.petadopt.data.repository.animals.DogRepository
+import com.example.petadopt.data.repository.animals.AnimalsRepository
 import com.example.petadopt.internal.lazyDeferred
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -10,9 +11,11 @@ import javax.inject.Inject
 class OverviewViewModel
 @Inject
 constructor(
-    private val dogRepository: DogRepository
+    private val savedStateHandle: SavedStateHandle,
+    private val animalsRepository: AnimalsRepository
 ): ViewModel() {
-    val dogs by lazyDeferred {
-        dogRepository.getDogs()
+    val animals by lazyDeferred {
+        Log.i("Debug", "ViewModel")
+        animalsRepository.getAnimals()
     }
 }

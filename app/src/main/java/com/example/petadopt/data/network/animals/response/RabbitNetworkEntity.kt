@@ -1,6 +1,6 @@
-package com.example.petadopt.data.domain
+package com.example.petadopt.data.network.animals.response
 
-data class Dog (
+data class RabbitNetworkEntity (
     var id: String,
     var name: String,
     var breed: String,

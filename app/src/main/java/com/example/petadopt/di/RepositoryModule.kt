@@ -2,10 +2,8 @@ package com.example.petadopt.di
 
 import com.example.petadopt.data.database.Dao
 import com.example.petadopt.data.database.animals.AnimalsDatabaseMapper
-import com.example.petadopt.data.network.animals.AnimalApiService
-import com.example.petadopt.data.network.animals.DogNetworkDataSource
-import com.example.petadopt.data.network.animals.DogNetworkMapper
-import com.example.petadopt.data.repository.animals.DogRepository
+import com.example.petadopt.data.network.animals.*
+import com.example.petadopt.data.repository.animals.AnimalsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,12 +15,24 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Singleton
     @Provides
-    fun provideDogRepository(
+    fun provideAnimalsApiService(): AnimalsApiService {
+        return AnimalsApiService()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAnimalsNetworkDataSource(animalsApiService: AnimalsApiService): AnimalsNetworkDataSource {
+        return AnimalsNetworkDataSourceImpl(animalsApiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAnimalsRepository(
         dao: Dao,
-        dogNetworkDataSource: DogNetworkDataSource,
-        networkMapper: DogNetworkMapper,
+        animalsNetworkDataSource: AnimalsNetworkDataSource,
+        animalsNetworkMapper: AnimalsNetworkMapper,
         databaseMapper: AnimalsDatabaseMapper
-    ): DogRepository {
-        return DogRepository(dao, dogNetworkDataSource, networkMapper, databaseMapper)
+    ): AnimalsRepository {
+        return AnimalsRepository(dao, animalsNetworkDataSource, animalsNetworkMapper, databaseMapper)
     }
 }

@@ -1,6 +1,6 @@
 package com.example.petadopt.data.domain
 
-data class Dog (
+data class Rabbit(
     var id: String,
     var name: String,
     var breed: String,
