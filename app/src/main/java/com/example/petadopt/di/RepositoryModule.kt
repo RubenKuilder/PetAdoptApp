@@ -1,11 +1,12 @@
 package com.example.petadopt.di
 
 import com.example.petadopt.data.database.Dao
-import com.example.petadopt.data.database.animals.AnimalsDatabaseMapper
-import com.example.petadopt.data.network.animals.AnimalApiService
-import com.example.petadopt.data.network.animals.DogNetworkDataSource
-import com.example.petadopt.data.network.animals.DogNetworkMapper
-import com.example.petadopt.data.repository.animals.DogRepository
+import com.example.petadopt.data.database.animals.CatDatabaseMapper
+import com.example.petadopt.data.database.animals.DogDatabaseMapper
+import com.example.petadopt.data.database.animals.ImageDatabaseMapper
+import com.example.petadopt.data.database.animals.RabbitDatabaseMapper
+import com.example.petadopt.data.network.animals.*
+import com.example.petadopt.data.repository.animals.AnimalsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,12 +18,35 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Singleton
     @Provides
-    fun provideDogRepository(
+    fun provideAnimalsApiService(): AnimalsApiService {
+        return AnimalsApiService()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAnimalsNetworkDataSource(animalsApiService: AnimalsApiService): AnimalsNetworkDataSource {
+        return AnimalsNetworkDataSource(animalsApiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAnimalsRepository(
         dao: Dao,
-        dogNetworkDataSource: DogNetworkDataSource,
-        networkMapper: DogNetworkMapper,
-        databaseMapper: AnimalsDatabaseMapper
-    ): DogRepository {
-        return DogRepository(dao, dogNetworkDataSource, networkMapper, databaseMapper)
+        animalsNetworkDataSource: AnimalsNetworkDataSource,
+        animalsNetworkMapper: AnimalsNetworkMapper,
+        dogDatabaseMapper: DogDatabaseMapper,
+        catDatabaseMapper: CatDatabaseMapper,
+        rabbitDatabaseMapper: RabbitDatabaseMapper,
+        imageDatabaseMapper: ImageDatabaseMapper
+    ): AnimalsRepository {
+        return AnimalsRepository(
+            dao,
+            animalsNetworkDataSource,
+            animalsNetworkMapper,
+            dogDatabaseMapper,
+            catDatabaseMapper,
+            rabbitDatabaseMapper,
+            imageDatabaseMapper
+        )
     }
 }

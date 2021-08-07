@@ -1,6 +1,8 @@
-package com.example.petadopt.data.domain
+package com.example.petadopt.data.network.animals.response
 
-data class Dog (
+import com.example.petadopt.data.domain.Image
+
+data class RabbitNetworkEntity (
     var id: String,
     var name: String,
     var breed: String,
@@ -9,5 +11,5 @@ data class Dog (
     var urgent: String,
     var height: String,
     var description: String,
-    var images: List<Image>
+    var images: List<String>
 )
