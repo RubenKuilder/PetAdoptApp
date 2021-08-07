@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.petadopt.R
+import com.example.petadopt.data.domain.Animal
 import com.example.petadopt.data.domain.Dog
 import com.example.petadopt.databinding.FragmentFirstBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +29,8 @@ class OverviewFragment : Fragment(), CoroutineScope {
 
     private var _binding: FragmentFirstBinding? = null
 
-    val viewModel: OverviewViewModel by viewModels()
+    private val viewModel: OverviewViewModel by viewModels()
+    private val adapter = OverviewListAdapter()
 
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
@@ -46,6 +48,7 @@ class OverviewFragment : Fragment(), CoroutineScope {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
         job = Job()
+        binding.overviewList.adapter = adapter
         appendAnimalNames()
 
         return binding.root
@@ -77,22 +80,35 @@ class OverviewFragment : Fragment(), CoroutineScope {
             Log.i("Debug", "Fragment - $animals")
             if(animals == null) return@Observer
 
-            val sb = StringBuilder()
+            val animalList: MutableList<Animal> = mutableListOf()
             for(dog in animals.dogs) {
-                sb.append(dog.name + " - " + dog.breed + "\n")
+                animalList.add(dog)
             }
-
-            sb.append("\n")
             for(cat in animals.cats) {
-                sb.append(cat.name + " - " + cat.breed + "\n")
+                animalList.add(cat)
             }
-
-            sb.append("\n")
             for(rabbit in animals.rabbits) {
-                sb.append(rabbit.name + " - " + rabbit.breed + "\n")
+                animalList.add(rabbit)
             }
 
-            binding.textView.text = sb.toString()
+            adapter.data = animalList
+
+//            val sb = StringBuilder()
+//            for(dog in animals.dogs) {
+//                sb.append(dog.name + " - " + dog.breed + "\n")
+//            }
+//
+//            sb.append("\n")
+//            for(cat in animals.cats) {
+//                sb.append(cat.name + " - " + cat.breed + "\n")
+//            }
+//
+//            sb.append("\n")
+//            for(rabbit in animals.rabbits) {
+//                sb.append(rabbit.name + " - " + rabbit.breed + "\n")
+//            }
+//
+//            binding.textView.text = sb.toString()
         })
     }
 }

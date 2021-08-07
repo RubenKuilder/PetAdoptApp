@@ -1,13 +1,18 @@
 package com.example.petadopt.data.domain
 
+import com.example.petadopt.data.domain.Animal.Companion.TYPE_RABBIT
+
 data class Rabbit(
-    var id: String,
-    var name: String,
-    var breed: String,
-    var sex: String,
-    var birthday: String,
-    var urgent: String,
-    var height: String,
-    var description: String,
-    var images: List<Image>
-)
+    override var id: String,
+    override var name: String,
+    override var breed: String,
+    override var sex: String,
+    override var birthday: String,
+    override var urgent: String,
+    override var height: String,
+    override var description: String,
+    override var images: List<Image>
+): Animal {
+    override val type: Int
+        get() = TYPE_RABBIT
+}
