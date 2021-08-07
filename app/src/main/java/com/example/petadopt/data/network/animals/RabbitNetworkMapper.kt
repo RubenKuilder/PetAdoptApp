@@ -1,5 +1,6 @@
 package com.example.petadopt.data.network.animals
 
+import com.example.petadopt.data.domain.Image
 import com.example.petadopt.data.domain.Rabbit
 import com.example.petadopt.data.network.animals.response.RabbitNetworkEntity
 import com.example.petadopt.utilities.EntityMapper
@@ -9,6 +10,11 @@ class RabbitNetworkMapper
 @Inject
 constructor(): EntityMapper<RabbitNetworkEntity, Rabbit> {
     override fun mapFromEntity(entity: RabbitNetworkEntity): Rabbit {
+        var images: MutableList<Image> = mutableListOf()
+        entity.images.forEach {
+            images.add(Image(entity.id, it))
+        }
+
         return Rabbit(
             id = entity.id,
             name = entity.name,
@@ -18,11 +24,16 @@ constructor(): EntityMapper<RabbitNetworkEntity, Rabbit> {
             urgent = entity.urgent,
             height = entity.height,
             description = entity.description,
-            images = entity.images
+            images = images
         )
     }
 
     override fun mapToEntity(domainModel: Rabbit): RabbitNetworkEntity {
+        var images: MutableList<String> = mutableListOf()
+        domainModel.images.forEach {
+            images.add(it.url)
+        }
+
         return RabbitNetworkEntity(
             id = domainModel.id,
             name = domainModel.name,
@@ -32,7 +43,7 @@ constructor(): EntityMapper<RabbitNetworkEntity, Rabbit> {
             urgent = domainModel.urgent,
             height = domainModel.height,
             description = domainModel.description,
-            images = domainModel.images
+            images = images
         )
     }
 

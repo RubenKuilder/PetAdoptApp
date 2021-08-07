@@ -2,6 +2,7 @@ package com.example.petadopt.data.network.animals
 
 import com.example.petadopt.data.domain.Cat
 import com.example.petadopt.data.domain.Dog
+import com.example.petadopt.data.domain.Image
 import com.example.petadopt.data.network.animals.response.AnimalsNetworkEntity
 import com.example.petadopt.data.network.animals.response.CatNetworkEntity
 import com.example.petadopt.data.network.animals.response.DogNetworkEntity
@@ -12,6 +13,11 @@ class CatNetworkMapper
 @Inject
 constructor(): EntityMapper<CatNetworkEntity, Cat>{
     override fun mapFromEntity(entity: CatNetworkEntity): Cat {
+        var images: MutableList<Image> = mutableListOf()
+        entity.images.forEach {
+            images.add(Image(entity.id, it))
+        }
+
         return Cat(
             id = entity.id,
             name = entity.name,
@@ -21,11 +27,16 @@ constructor(): EntityMapper<CatNetworkEntity, Cat>{
             urgent = entity.urgent,
             height = entity.height,
             description = entity.description,
-            images = entity.images
+            images = images
         )
     }
 
     override fun mapToEntity(domainModel: Cat): CatNetworkEntity {
+        var images: MutableList<String> = mutableListOf()
+        domainModel.images.forEach {
+            images.add(it.url)
+        }
+
         return CatNetworkEntity(
             id = domainModel.id,
             name = domainModel.name,
@@ -35,7 +46,7 @@ constructor(): EntityMapper<CatNetworkEntity, Cat>{
             urgent = domainModel.urgent,
             height = domainModel.height,
             description = domainModel.description,
-            images = domainModel.images
+            images = images
         )
     }
 

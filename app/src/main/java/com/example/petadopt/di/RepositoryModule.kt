@@ -1,7 +1,10 @@
 package com.example.petadopt.di
 
 import com.example.petadopt.data.database.Dao
-import com.example.petadopt.data.database.animals.AnimalsDatabaseMapper
+import com.example.petadopt.data.database.animals.CatDatabaseMapper
+import com.example.petadopt.data.database.animals.DogDatabaseMapper
+import com.example.petadopt.data.database.animals.ImageDatabaseMapper
+import com.example.petadopt.data.database.animals.RabbitDatabaseMapper
 import com.example.petadopt.data.network.animals.*
 import com.example.petadopt.data.repository.animals.AnimalsRepository
 import dagger.Module
@@ -22,7 +25,7 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideAnimalsNetworkDataSource(animalsApiService: AnimalsApiService): AnimalsNetworkDataSource {
-        return AnimalsNetworkDataSourceImpl(animalsApiService)
+        return AnimalsNetworkDataSource(animalsApiService)
     }
 
     @Singleton
@@ -31,8 +34,19 @@ object RepositoryModule {
         dao: Dao,
         animalsNetworkDataSource: AnimalsNetworkDataSource,
         animalsNetworkMapper: AnimalsNetworkMapper,
-        databaseMapper: AnimalsDatabaseMapper
+        dogDatabaseMapper: DogDatabaseMapper,
+        catDatabaseMapper: CatDatabaseMapper,
+        rabbitDatabaseMapper: RabbitDatabaseMapper,
+        imageDatabaseMapper: ImageDatabaseMapper
     ): AnimalsRepository {
-        return AnimalsRepository(dao, animalsNetworkDataSource, animalsNetworkMapper, databaseMapper)
+        return AnimalsRepository(
+            dao,
+            animalsNetworkDataSource,
+            animalsNetworkMapper,
+            dogDatabaseMapper,
+            catDatabaseMapper,
+            rabbitDatabaseMapper,
+            imageDatabaseMapper
+        )
     }
 }

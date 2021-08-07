@@ -1,6 +1,7 @@
 package com.example.petadopt.ui.overview
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -72,6 +73,8 @@ class OverviewFragment : Fragment(), CoroutineScope {
         val animals = viewModel.animals.await()
 
         animals.observe(viewLifecycleOwner, Observer { animals ->
+            Log.i("Debug", "Fragment - Observer")
+            Log.i("Debug", "Fragment - $animals")
             if(animals == null) return@Observer
 
             val sb = StringBuilder()

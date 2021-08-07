@@ -9,5 +9,5 @@ data class Cat(
     var urgent: String,
     var height: String,
     var description: String,
-    var images: List<String>
+    var images: List<Image>
 )

@@ -1,5 +1,7 @@
 package com.example.petadopt.data.network.animals.response
 
+import com.example.petadopt.data.domain.Image
+
 data class CatNetworkEntity (
     var id: String,
     var name: String,

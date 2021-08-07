@@ -1,6 +1,8 @@
 package com.example.petadopt.data.network.animals
 
+import com.example.petadopt.data.database.animals.ImageDatabaseMapper
 import com.example.petadopt.data.domain.Dog
+import com.example.petadopt.data.domain.Image
 import com.example.petadopt.data.network.animals.response.DogNetworkEntity
 import com.example.petadopt.utilities.EntityMapper
 import javax.inject.Inject
@@ -14,6 +16,11 @@ constructor() : EntityMapper<DogNetworkEntity, Dog> {
     // Bijv getDog() die in een forEach op de AnimalsNetworkMapper.dogs DogNetworkMapper.mapFromEntity(it) aanroept
 
     override fun mapFromEntity(entity: DogNetworkEntity): Dog {
+        var images: MutableList<Image> = mutableListOf()
+        entity.images.forEach {
+            images.add(Image(entity.id, it))
+        }
+
         return Dog(
             id = entity.id,
             name = entity.name,
@@ -23,11 +30,15 @@ constructor() : EntityMapper<DogNetworkEntity, Dog> {
             urgent = entity.urgent,
             height = entity.height,
             description = entity.description,
-            images = entity.images
+            images = images
         )
     }
 
     override fun mapToEntity(domainModel: Dog): DogNetworkEntity {
+        var images: MutableList<String> = mutableListOf()
+        domainModel.images.forEach {
+            images.add(it.url)
+        }
 
         return DogNetworkEntity(
             id = domainModel.id,
@@ -38,7 +49,7 @@ constructor() : EntityMapper<DogNetworkEntity, Dog> {
             urgent = domainModel.urgent,
             height = domainModel.height,
             description = domainModel.description,
-            images = domainModel.images
+            images = images
         )
     }
 

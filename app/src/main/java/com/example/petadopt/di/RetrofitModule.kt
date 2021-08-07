@@ -7,8 +7,7 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
-    // Dit heb ik nu in AnimalApiService.
-    // Waar is het het mooist om dit neer te zetten?
+    // TODO: Dit heb ik nu in AnimalApiService. Waar is het het mooist om dit neer te zetten?
 //    @Singleton
 //    @Provides
 //    fun provideGsonBuilder(): Gson {
