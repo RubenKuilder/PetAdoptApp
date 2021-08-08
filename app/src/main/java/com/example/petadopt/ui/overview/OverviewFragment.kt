@@ -76,8 +76,6 @@ class OverviewFragment : Fragment(), CoroutineScope {
         val animals = viewModel.animals.await()
 
         animals.observe(viewLifecycleOwner, Observer { animals ->
-            Log.i("Debug", "Fragment - Observer")
-            Log.i("Debug", "Fragment - $animals")
             if(animals == null) return@Observer
 
             val animalList: MutableList<Animal> = mutableListOf()
@@ -91,24 +89,7 @@ class OverviewFragment : Fragment(), CoroutineScope {
                 animalList.add(rabbit)
             }
 
-            adapter.data = animalList
-
-//            val sb = StringBuilder()
-//            for(dog in animals.dogs) {
-//                sb.append(dog.name + " - " + dog.breed + "\n")
-//            }
-//
-//            sb.append("\n")
-//            for(cat in animals.cats) {
-//                sb.append(cat.name + " - " + cat.breed + "\n")
-//            }
-//
-//            sb.append("\n")
-//            for(rabbit in animals.rabbits) {
-//                sb.append(rabbit.name + " - " + rabbit.breed + "\n")
-//            }
-//
-//            binding.textView.text = sb.toString()
+            adapter.submitList(animalList)
         })
     }
 }
