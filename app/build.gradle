@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -32,7 +32,8 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        viewBinding true
+        viewBinding = true
+        dataBinding true
     }
 }
 
@@ -66,4 +67,8 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
+
+    // Picasso
+    def picasso_version = "2.71828"
+    implementation "com.squareup.picasso:picasso:$picasso_version"
 }
