@@ -15,7 +15,6 @@ constructor(
     private val animalsRepository: AnimalsRepository
 ): ViewModel() {
     val animals by lazyDeferred {
-        Log.i("Debug", "ViewModel")
         animalsRepository.getAnimals()
     }
 }

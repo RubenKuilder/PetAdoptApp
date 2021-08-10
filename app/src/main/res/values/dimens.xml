@@ -1,4 +1,6 @@
 <resources>
     <dimen name="app_margin">16dp</dimen>
     <dimen name="toolbarSize">66dp</dimen>
+    <dimen name="toolbarPaddingLeft">16dp</dimen>
+    <dimen name="toolbarPaddingRight">8dp</dimen>
 </resources>

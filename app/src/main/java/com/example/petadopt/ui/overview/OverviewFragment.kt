@@ -1,24 +1,24 @@
 package com.example.petadopt.ui.overview
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
-import com.example.petadopt.R
+import androidx.recyclerview.widget.ConcatAdapter
 import com.example.petadopt.data.domain.Animal
-import com.example.petadopt.data.domain.Dog
 import com.example.petadopt.databinding.FragmentFirstBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.lang.StringBuilder
+import java.util.*
+import kotlin.concurrent.schedule
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -30,7 +30,8 @@ class OverviewFragment : Fragment(), CoroutineScope {
     private var _binding: FragmentFirstBinding? = null
 
     private val viewModel: OverviewViewModel by viewModels()
-    private val adapter = OverviewListAdapter()
+    private val headerAdapter = OverviewHeaderAdapter()
+    private val listAdapter = OverviewListAdapter()
 
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
@@ -48,7 +49,17 @@ class OverviewFragment : Fragment(), CoroutineScope {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
         job = Job()
-        binding.overviewList.adapter = adapter
+        val concatAdapter = ConcatAdapter(headerAdapter, listAdapter)
+        binding.overviewList.adapter = concatAdapter
+
+        binding.swipeContainer.setOnRefreshListener {
+            Toast.makeText(this.context, "Refresh!", Toast.LENGTH_LONG).show()
+
+            // TODO: Remove timer and add proper check for when data is refreshed or failed to refresh
+            Timer().schedule(2000) {
+                binding.swipeContainer.isRefreshing = false
+            }
+        }
         appendAnimalNames()
 
         return binding.root
@@ -56,10 +67,6 @@ class OverviewFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.bannerButton.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
     }
 
     override fun onDestroyView() {
@@ -76,8 +83,6 @@ class OverviewFragment : Fragment(), CoroutineScope {
         val animals = viewModel.animals.await()
 
         animals.observe(viewLifecycleOwner, Observer { animals ->
-            Log.i("Debug", "Fragment - Observer")
-            Log.i("Debug", "Fragment - $animals")
             if(animals == null) return@Observer
 
             val animalList: MutableList<Animal> = mutableListOf()
@@ -91,24 +96,7 @@ class OverviewFragment : Fragment(), CoroutineScope {
                 animalList.add(rabbit)
             }
 
-            adapter.data = animalList
-
-//            val sb = StringBuilder()
-//            for(dog in animals.dogs) {
-//                sb.append(dog.name + " - " + dog.breed + "\n")
-//            }
-//
-//            sb.append("\n")
-//            for(cat in animals.cats) {
-//                sb.append(cat.name + " - " + cat.breed + "\n")
-//            }
-//
-//            sb.append("\n")
-//            for(rabbit in animals.rabbits) {
-//                sb.append(rabbit.name + " - " + rabbit.breed + "\n")
-//            }
-//
-//            binding.textView.text = sb.toString()
+            listAdapter.submitList(animalList)
         })
     }
 }
