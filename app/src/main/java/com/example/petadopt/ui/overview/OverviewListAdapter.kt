@@ -2,7 +2,6 @@ package com.example.petadopt.ui.overview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -19,12 +18,12 @@ import com.example.petadopt.utilities.Utils
 import com.squareup.picasso.Picasso
 
 
-class OverviewListAdapter: ListAdapter<Animal, OverviewListAdapter.ViewHolder>(OverviewListDiffCallback()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+class OverviewListAdapter: ListAdapter<Animal, OverviewListAdapter.OverviewListItemViewHolder>(OverviewListDiffCallback()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OverviewListItemViewHolder {
+        return OverviewListItemViewHolder.from(parent)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OverviewListItemViewHolder, position: Int) {
         val item = getItem(position)
         when(item.type) {
             TYPE_DOG -> holder.bindDog(item as Dog)
@@ -33,7 +32,7 @@ class OverviewListAdapter: ListAdapter<Animal, OverviewListAdapter.ViewHolder>(O
         }
     }
 
-    class ViewHolder(val binding: OverviewListItemBinding): RecyclerView.ViewHolder(binding.root) {
+    class OverviewListItemViewHolder(val binding: OverviewListItemBinding): RecyclerView.ViewHolder(binding.root) {
         //TODO: Multiple viewholders?
         // List item margins
         // Different margin at top and bottom
@@ -110,10 +109,10 @@ class OverviewListAdapter: ListAdapter<Animal, OverviewListAdapter.ViewHolder>(O
         }
 
         companion object {
-            fun from(parent: ViewGroup): ViewHolder {
+            fun from(parent: ViewGroup): OverviewListItemViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = OverviewListItemBinding.inflate(layoutInflater, parent, false)
-                return ViewHolder(binding)
+                return OverviewListItemViewHolder(binding)
             }
         }
     }
