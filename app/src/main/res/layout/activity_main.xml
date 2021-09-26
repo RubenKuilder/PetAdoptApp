@@ -7,35 +7,6 @@
     android:background="#F5F5F5"
     tools:context=".ui.MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.PetAdopt.AppBarOverlay"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbarSize"
-            android:minHeight="@dimen/toolbarSize"
-            app:contentInsetStartWithNavigation="0dp"
-            android:contentInsetLeft="0dp"
-            android:contentInsetStart="0dp"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            android:contentInsetRight="0dp"
-            android:contentInsetEnd="0dp"
-            app:contentInsetRight="0dp"
-            app:contentInsetEnd="0dp"
-            android:paddingStart="@dimen/toolbarPaddingLeft"
-            android:paddingEnd="@dimen/toolbarPaddingRight"
-            app:buttonGravity="center_vertical"
-            app:popupTheme="@style/Theme.PetAdopt.PopupOverlay"
-            app:titleTextAppearance="@style/Theme.PetAdopt.Toolbar.TitleText" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <include layout="@layout/content_main" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

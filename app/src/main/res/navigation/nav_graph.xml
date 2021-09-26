@@ -9,7 +9,7 @@
         android:id="@+id/FirstFragment"
         android:name="com.example.petadopt.ui.overview.OverviewFragment"
         android:label="@string/welcome_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/overview_fragment">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
