@@ -27,7 +27,8 @@ constructor(): EntityMapper<CatNetworkEntity, Cat>{
             urgent = entity.urgent,
             height = entity.height,
             description = entity.description,
-            images = images
+            images = images,
+            isFavourite = false
         )
     }
 

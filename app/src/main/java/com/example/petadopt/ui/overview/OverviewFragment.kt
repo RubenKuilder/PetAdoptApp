@@ -2,6 +2,7 @@ package com.example.petadopt.ui.overview
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
+import com.example.petadopt.R
 import com.example.petadopt.data.domain.Animal
+import com.example.petadopt.data.domain.Animals
 import com.example.petadopt.databinding.FragmentFirstBinding
+import com.example.petadopt.utilities.DataState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,21 +30,16 @@ import kotlin.coroutines.CoroutineContext
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 @AndroidEntryPoint
-class OverviewFragment : Fragment(), CoroutineScope {
+class OverviewFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding
+        get() = _binding!!
 
     private val viewModel: OverviewViewModel by viewModels()
     private val headerAdapter = OverviewHeaderAdapter()
-    private val listAdapter = OverviewListAdapter()
-
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private lateinit var listAdapter: OverviewListAdapter
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -48,25 +48,27 @@ class OverviewFragment : Fragment(), CoroutineScope {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
-        job = Job()
+
+        listAdapter = OverviewListAdapter(
+            AnimalListener { animalIdTypePair ->
+                viewModel.onAnimalClicked(animalIdTypePair)
+            },
+            FavouriteListener { animal ->
+                viewModel.addFavourite(animal)
+            }
+        )
         val concatAdapter = ConcatAdapter(headerAdapter, listAdapter)
         binding.overviewList.adapter = concatAdapter
 
-        binding.swipeContainer.setOnRefreshListener {
-            Toast.makeText(this.context, "Refresh!", Toast.LENGTH_LONG).show()
+        dataStateObserver()
+        navigationObserver()
+        viewModel.setStateEvent(MainStateEvent.GetAnimalsEvents)
 
-            // TODO: Remove timer and add proper check for when data is refreshed or failed to refresh
-            Timer().schedule(2000) {
-                binding.swipeContainer.isRefreshing = false
-            }
+        binding.swipeContainer.setOnRefreshListener {
+            viewModel.setStateEvent(MainStateEvent.HardRefreshAnimalsEvents)
         }
-        appendAnimalNames()
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDestroyView() {
@@ -74,29 +76,63 @@ class OverviewFragment : Fragment(), CoroutineScope {
         _binding = null
     }
 
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
+    private fun dataStateObserver() {
+        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
+            when(dataState) {
+                is DataState.Success<Animals> -> {
+                    displayProgressBar(false)
+                    binding.swipeContainer.isRefreshing = false
+
+                    appendAnimals(dataState.data)
+                }
+                is DataState.Error -> {
+                    displayProgressBar(false)
+                    binding.swipeContainer.isRefreshing = false
+
+                    displayError(dataState.exception.message)
+                }
+                is DataState.Loading -> {
+                    displayProgressBar(true)
+                }
+            }
+        })
     }
 
-    private fun appendAnimalNames() = launch {
-        val animals = viewModel.animals.await()
+    private fun navigationObserver() {
+        viewModel.navigateToAnimalDetails.observe(viewLifecycleOwner, Observer { animal ->
+            animal?.let {
+                val action = OverviewFragmentDirections.actionFirstFragmentToAnimalDetailFragment(animal.first, animal.second)
+                this.findNavController().navigate(action)
 
-        animals.observe(viewLifecycleOwner, Observer { animals ->
-            if(animals == null) return@Observer
-
-            val animalList: MutableList<Animal> = mutableListOf()
-            for(dog in animals.dogs) {
-                animalList.add(dog)
+                viewModel.onAnimalDetailsNavigated()
             }
-            for(cat in animals.cats) {
-                animalList.add(cat)
-            }
-            for(rabbit in animals.rabbits) {
-                animalList.add(rabbit)
-            }
-
-            listAdapter.submitList(animalList)
         })
+    }
+
+    private fun displayError(message: String?) {
+        if (message != null) {
+            Toast.makeText(this.context, message, Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this.context, "Unkown error", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun displayProgressBar(isDisplayed: Boolean) {
+        binding.progressBar.visibility = if(isDisplayed) View.VISIBLE else View.GONE
+    }
+
+    private fun appendAnimals(animals: Animals) {
+        val animalList: MutableList<Animal> = mutableListOf()
+        for(dog in animals.dogs) {
+            animalList.add(dog)
+        }
+        for(cat in animals.cats) {
+            animalList.add(cat)
+        }
+        for(rabbit in animals.rabbits) {
+            animalList.add(rabbit)
+        }
+
+        listAdapter.submitList(animalList)
     }
 }

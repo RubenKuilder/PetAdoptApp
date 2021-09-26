@@ -20,4 +20,10 @@ class Utils {
 
         return ageInMonths
     }
+
+    companion object {
+        const val TYPE_DOG = 101
+        const val TYPE_CAT = 102
+        const val TYPE_RABBIT = 103
+    }
 }

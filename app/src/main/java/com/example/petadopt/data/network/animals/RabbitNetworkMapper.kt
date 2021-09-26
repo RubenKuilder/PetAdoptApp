@@ -24,7 +24,8 @@ constructor(): EntityMapper<RabbitNetworkEntity, Rabbit> {
             urgent = entity.urgent,
             height = entity.height,
             description = entity.description,
-            images = images
+            images = images,
+            isFavourite = false
         )
     }
 

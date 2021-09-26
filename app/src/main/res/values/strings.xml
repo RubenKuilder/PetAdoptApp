@@ -10,9 +10,27 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="overview_preview_description">Animal preview image</string>
     <string name="overview_item_name">Name</string>
     <string name="overview_item_breed">Breed</string>
     <string name="overview_item_sexAndAge">Sex and age</string>
-    <string name="overview_item_height">Height</string>
+    <string name="overview_dogitem_height">%s cm schofthoogte</string>
     <string name="overview_item_favourite_icon">Favourite icon</string>
+    <string name="animal_type_image_description">Animal type image</string>
+    <string name="sexLabel">Sex</string>
+    <string name="ageLabel">Age</string>
+    <string name="urgentLabel">Urgent</string>
+    <string name="heightLabel">Height</string>
+    <string name="namePlaceholder">Name placeholder</string>
+    <string name="breedPlaceholder">BreedPlaceholder</string>
+    <string name="sexPlaceholder">SexPlaceholder</string>
+    <string name="agePlaceholder">AgePlaceholder</string>
+    <string name="urgentPlaceholder">UrgentPlaceholder</string>
+    <string name="heightPlaceholder">HeightPlaceholder</string>
+    <string name="contactTitle">Neem contact op</string>
+    <string name="contactSubtitle">Bel of e-mail ons</string>
+    <string name="descriptionPlaceholder">DescriptionPlaceholder</string>
+    <string name="call">Call</string>
+    <string name="mail">Mail</string>
+    <string name="contact_avatar">Contact avatar</string>
 </resources>

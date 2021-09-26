@@ -1,6 +1,7 @@
 package com.example.petadopt.data.domain
 
-import com.example.petadopt.data.domain.Animal.Companion.TYPE_CAT
+import com.example.petadopt.utilities.Utils.Companion.TYPE_CAT
+
 
 data class Cat(
     override var id: String,
@@ -11,7 +12,8 @@ data class Cat(
     override var urgent: String,
     override var height: String,
     override var description: String,
-    override var images: List<Image>
+    override var images: List<Image>,
+    override var isFavourite: Boolean
 ): Animal {
     override val type: Int
         get() = TYPE_CAT

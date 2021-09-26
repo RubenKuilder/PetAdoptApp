@@ -7,11 +7,11 @@ import com.example.petadopt.data.database.animals.entities.DogDatabaseEntity
 import com.example.petadopt.data.database.animals.entities.ImageDatabaseEntity
 import com.example.petadopt.data.database.animals.entities.RabbitDatabaseEntity
 
-@Database(entities = [DogDatabaseEntity::class, CatDatabaseEntity::class, RabbitDatabaseEntity::class, ImageDatabaseEntity::class], version = 1)
+@Database(entities = [DogDatabaseEntity::class, CatDatabaseEntity::class, RabbitDatabaseEntity::class, ImageDatabaseEntity::class], version = 5)
 abstract class Database: RoomDatabase() {
     abstract fun dao(): Dao
 
     companion object {
-        val DATABASE_NAME: String = "database"
+        const val DATABASE_NAME: String = "database"
     }
 }

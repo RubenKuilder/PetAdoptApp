@@ -1,5 +1,6 @@
 package com.example.petadopt.data.database.animals
 
+import android.util.Log
 import com.example.petadopt.data.database.animals.entities.DogDatabaseEntity
 import com.example.petadopt.data.database.animals.entities.DogWithImages
 import com.example.petadopt.data.database.animals.entities.ImageDatabaseEntity
@@ -27,7 +28,8 @@ constructor(
             birthday = domainModel.birthday,
             urgent = domainModel.urgent,
             height = domainModel.height,
-            description = domainModel.description
+            description = domainModel.description,
+            isFavourite = domainModel.isFavourite
         )
     }
 
@@ -41,7 +43,8 @@ constructor(
             urgent = entity.dog.urgent,
             height = entity.dog.height,
             description = entity.dog.description,
-            images = imageDatabaseMapper.mapFromEntityList(entity.images)
+            images = imageDatabaseMapper.mapFromEntityList(entity.images),
+            isFavourite = entity.dog.isFavourite
         )
     }
 
