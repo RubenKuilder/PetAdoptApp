@@ -24,15 +24,9 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideAnimalsNetworkDataSource(animalsApiService: AnimalsApiService): AnimalsNetworkDataSource {
-        return AnimalsNetworkDataSource(animalsApiService)
-    }
-
-    @Singleton
-    @Provides
     fun provideAnimalsRepository(
         dao: Dao,
-        animalsNetworkDataSource: AnimalsNetworkDataSource,
+        animalsApiService: AnimalsApiService,
         animalsNetworkMapper: AnimalsNetworkMapper,
         dogDatabaseMapper: DogDatabaseMapper,
         catDatabaseMapper: CatDatabaseMapper,
@@ -41,7 +35,7 @@ object RepositoryModule {
     ): AnimalsRepository {
         return AnimalsRepository(
             dao,
-            animalsNetworkDataSource,
+            animalsApiService,
             animalsNetworkMapper,
             dogDatabaseMapper,
             catDatabaseMapper,

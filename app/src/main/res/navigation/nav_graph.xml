@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_animalDetailFragment"
+            app:destination="@id/animalDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -24,5 +27,20 @@
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/animalDetailFragment"
+        android:name="com.example.petadopt.ui.animaldetail.AnimalDetailFragment"
+        android:label="animal_detail_fragment"
+        tools:layout="@layout/animal_detail_fragment" >
+        <action
+            android:id="@+id/action_animalDetailFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <argument
+            android:name="animalId"
+            app:argType="string" />
+        <argument
+            android:name="animalType"
+            app:argType="integer" />
     </fragment>
 </navigation>

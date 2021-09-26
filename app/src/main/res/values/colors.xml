@@ -4,7 +4,9 @@
     <color name="yellow_500">#FFFFC615</color>
     <color name="yellow_700">#FFC79600</color>
     <color name="black">#FF252525</color>
+    <color name="grey">#FFCCCCCC</color>
     <color name="white_200">#FFFFFFFF</color>
     <color name="white_500">#FFF5F5F5</color>
     <color name="white_600">#FFC2C2C2</color>
+    <color name="red_500">#FFf44336</color>
 </resources>

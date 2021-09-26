@@ -12,10 +12,5 @@ interface Animal {
     var height: String
     var description: String
     var images: List<Image>
-
-    companion object {
-        const val TYPE_DOG = 101
-        const val TYPE_CAT = 102
-        const val TYPE_RABBIT = 103
-    }
+    var isFavourite: Boolean
 }

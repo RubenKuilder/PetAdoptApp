@@ -1,5 +1,7 @@
 package com.example.petadopt.data.database.animals.entities
 
+import androidx.annotation.Nullable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -13,5 +15,8 @@ data class RabbitDatabaseEntity(
     var birthday: String,
     var urgent: String,
     var height: String,
-    var description: String
+    var description: String,
+
+    @ColumnInfo(defaultValue = "0")
+    var isFavourite: Boolean
 )

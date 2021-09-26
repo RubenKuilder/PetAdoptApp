@@ -8,71 +8,73 @@ import com.example.petadopt.data.database.animals.CatDatabaseMapper
 import com.example.petadopt.data.database.animals.DogDatabaseMapper
 import com.example.petadopt.data.database.animals.ImageDatabaseMapper
 import com.example.petadopt.data.database.animals.RabbitDatabaseMapper
-import com.example.petadopt.data.domain.Animals
+import com.example.petadopt.data.domain.*
 import com.example.petadopt.data.network.animals.*
 import com.example.petadopt.data.network.animals.response.AnimalsNetworkEntity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.petadopt.utilities.DataState
+import com.example.petadopt.utilities.Utils.Companion.TYPE_CAT
+import com.example.petadopt.utilities.Utils.Companion.TYPE_DOG
+import com.example.petadopt.utilities.Utils.Companion.TYPE_RABBIT
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.lang.Exception
 import java.time.ZonedDateTime
 
 class AnimalsRepository
 constructor(
     private val dao: Dao,
-    private val animalsNetworkDataSource: AnimalsNetworkDataSource,
+    private val animalsApiService: AnimalsApiService,
     private val animalsNetworkMapper: AnimalsNetworkMapper,
     private val dogDatabaseMapper: DogDatabaseMapper,
     private val catDatabaseMapper: CatDatabaseMapper,
     private val rabbitDatabaseMapper: RabbitDatabaseMapper,
     private val imageDatabaseMapper: ImageDatabaseMapper
 ) {
-    private var timeDownloaded = ZonedDateTime.now().minusMinutes(60)
-
-    /**
-     * Initialize observable
-     */
-    init {
-        animalsNetworkDataSource.downloadedAnimalsNetworkEntity.observeForever { animals ->
-            persistDownloadedAnimals(animals)
-        }
-    }
+    private var timeFetched = ZonedDateTime.now().minusMinutes(60)
 
     /**
      * This method is supposed to retrieve the data from the database
-     * TODO: Is this supposed to return LiveData<Animals>???
      */
-    suspend fun getAnimals(): LiveData<Animals?> {
-        return withContext(Dispatchers.IO) {
-            Log.i("Debug", "repository - getAnimals()")
-            initAnimalsData()
+    suspend fun getAnimals(hardRefresh: Boolean): Flow<DataState<Animals>> = flow {
+        try {
+            if(isFetchCurrentlyNeeded() || hardRefresh) {
+                if(!hardRefresh) {
+                    emit(DataState.Loading)
+                }
 
-            // TODO: get the actual data here
-            // Get each animal type
-            // Construct an Animal object
-            // Return Animal object
+                // Update timeFetched
+                timeFetched = ZonedDateTime.now()
 
+                // Get the data from the API
+                val networkAnimals = animalsApiService.getAnimals()
+
+                // Persist fetched data into Database
+                persistFetchedAnimals(networkAnimals)
+            }
+
+            // Get the data from the database
             val dogs = dogDatabaseMapper.mapFromEntityList(dao.getDogsWithImages())
             val cats = catDatabaseMapper.mapFromEntityList(dao.getCatsWithImages())
             val rabbits = rabbitDatabaseMapper.mapFromEntityList(dao.getRabbitsWithImages())
-            val animals = MutableLiveData(Animals(dogs, cats, rabbits))
-            return@withContext animals
+            val animals = Animals(dogs, cats, rabbits)
+
+            emit(DataState.Success(animals))
+        } catch (e: Exception) {
+            emit(DataState.Error(e))
         }
     }
 
     /**
      * This method is supposed to insert the network data into the database
      */
-    fun persistDownloadedAnimals(downloadedAnimals: AnimalsNetworkEntity) {
-        GlobalScope.launch(Dispatchers.IO) {
-            Log.i("Debug", "repository - persistDownloadedAnimals()")
-//            Log.i("Debug", "repository - $downloadedAnimals")
-//            animalsData = animalsNetworkMapper.mapFromEntity(downloadedAnimals)
+    private suspend fun persistFetchedAnimals(fetchedAnimals: AnimalsNetworkEntity) {
+        val animals = animalsNetworkMapper.mapFromEntity(fetchedAnimals)
 
-            val animals = animalsNetworkMapper.mapFromEntity(downloadedAnimals)
-
+        // TODO: Add better try catch around each outer for loop
+        try {
             // Iterate over every dog in the list
-            for(dog in animals.dogs) {
+            for (dog in animals.dogs) {
                 // Update/insert the dog entity
                 dao.upsertDogDatabaseEntity(dogDatabaseMapper.mapToEntity(dog))
 
@@ -82,9 +84,13 @@ constructor(
                     dao.upsertImageDatabaseEntity(imageDatabaseMapper.mapToEntity(image))
                 }
             }
+        } catch (e: Exception) {
+            Log.i("Debug", "exception: $e")
+        }
 
+        try {
             // Iterate over every cat in the list
-            for(cat in animals.cats) {
+            for (cat in animals.cats) {
                 // Update/insert the dog entity
                 dao.upsertCatDatabaseEntity(catDatabaseMapper.mapToEntity(cat))
 
@@ -94,9 +100,13 @@ constructor(
                     dao.upsertImageDatabaseEntity(imageDatabaseMapper.mapToEntity(image))
                 }
             }
+        } catch (e: Exception) {
+            Log.i("Debug", "exception: $e")
+        }
 
+        try {
             // Iterate over every cat in the list
-            for(rabbit in animals.rabbits) {
+            for (rabbit in animals.rabbits) {
                 // Update/insert the dog entity
                 dao.upsertRabbitDatabaseEntity(rabbitDatabaseMapper.mapToEntity(rabbit))
 
@@ -106,37 +116,67 @@ constructor(
                     dao.upsertImageDatabaseEntity(imageDatabaseMapper.mapToEntity(image))
                 }
             }
+        } catch (e: Exception) {
+            Log.i("Debug", "exception: $e")
         }
     }
 
-    /**
-     * Download API data and set new value for timeDownloaded
-     */
-    private suspend fun initAnimalsData() {
-        if(isDownloadCurrentlyNeeded()) {
-            downloadAnimals()
-
-            // TODO: uncomment this line
-//            timeDownloaded = ZonedDateTime.now()
+    suspend fun updateIsFavourite(animal: Animal) {
+        when (animal.type) {
+            TYPE_DOG -> {
+                dao.updateIsFavouriteDogDatabaseEntity(animal.id)
+            }
+            TYPE_CAT -> {
+                dao.updateIsFavouriteCatDatabaseEntity(animal.id)
+            }
+            TYPE_RABBIT -> {
+                dao.updateIsFavouriteRabbitDatabaseEntity(animal.id)
+            }
         }
     }
 
-    /**
-     * Download complete animals object
-     */
-    private suspend fun downloadAnimals() {
-        animalsNetworkDataSource.downloadAnimals()
+    suspend fun getSingleAnimal(id: String, type: Int): Flow<DataState<Animal>?> = flow {
+        try {
+            emit(DataState.Loading)
+            //TODO: Add working progressBar in animal_detail_fragment.xml
+            //TODO: Add the material design placeholder animations
+//            delay(2000)
+
+            when (type) {
+                TYPE_DOG -> {
+                    emit(
+                        DataState.Success(
+                            dogDatabaseMapper.mapFromDogWithImage(dao.getSingleDogWithImages(id))
+                        )
+                    )
+                }
+                TYPE_CAT -> {
+                    emit(
+                        DataState.Success(
+                            catDatabaseMapper.mapFromDogWithImage(dao.getSingleCatWithImages(id))
+                        )
+                    )
+                }
+                TYPE_RABBIT -> {
+                    emit(
+                        DataState.Success(
+                            rabbitDatabaseMapper.mapFromDogWithImage(
+                                dao.getSingleRabbitWithImages(
+                                    id
+                                )
+                            )
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            emit(DataState.Error(e))
+        }
     }
 
-    /**
-     * Check if downloading of API data is currently needed
-     *
-     * @return return if timeDownloaded is before -setTime- ago
-     * TODO: Set 30 minutes in a constant somewhere
-     */
-    private fun isDownloadCurrentlyNeeded(): Boolean {
+    private fun isFetchCurrentlyNeeded(): Boolean {
         val thirtyMinutesAgo = ZonedDateTime.now().minusMinutes(30)
 
-        return timeDownloaded.isBefore(thirtyMinutesAgo)
+        return timeFetched.isBefore(thirtyMinutesAgo)
     }
 }

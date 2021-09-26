@@ -27,7 +27,8 @@ constructor(
             birthday = domainModel.birthday,
             urgent = domainModel.urgent,
             height = domainModel.height,
-            description = domainModel.description
+            description = domainModel.description,
+            isFavourite = domainModel.isFavourite
         )
     }
 
@@ -41,7 +42,8 @@ constructor(
             urgent = entity.rabbit.urgent,
             height = entity.rabbit.height,
             description = entity.rabbit.description,
-            images = imageDatabaseMapper.mapFromEntityList(entity.images)
+            images = imageDatabaseMapper.mapFromEntityList(entity.images),
+            isFavourite = entity.rabbit.isFavourite
         )
     }
 

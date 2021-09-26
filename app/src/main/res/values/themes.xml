@@ -31,4 +31,8 @@
     </style>
 
     <style name="Theme.PetAdopt.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.PetAdopt.YellowAccent">
+        <item name="colorAccent">@color/yellow_500</item>
+    </style>
 </resources>
