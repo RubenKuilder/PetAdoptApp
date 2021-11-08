@@ -33,4 +33,6 @@
     <string name="call">Call</string>
     <string name="mail">Mail</string>
     <string name="contact_avatar">Contact avatar</string>
+    <string name="overview_toolbar_title">Welkom!</string>
+    <string name="animalpreviewimage">AnimalPreviewImage</string>
 </resources>
