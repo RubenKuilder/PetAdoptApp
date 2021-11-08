@@ -1,22 +1,23 @@
 package com.example.petadopt.ui.animaldetail
 
+import com.example.petadopt.R
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.petadopt.data.domain.Animal
-import com.example.petadopt.data.domain.Animals
 import com.example.petadopt.databinding.AnimalDetailFragmentBinding
-import com.example.petadopt.databinding.FragmentFirstBinding
 import com.example.petadopt.utilities.DataState
 import com.example.petadopt.utilities.Utils
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class AnimalDetailFragment : Fragment() {
@@ -32,6 +33,10 @@ class AnimalDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = AnimalDetailFragmentBinding.inflate(inflater, container, false)
+
+        val toolbar: Toolbar = binding.toolbar
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_circle_filled_36dp)
+        toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
 
         val arguments = AnimalDetailFragmentArgs.fromBundle(requireArguments())
 
@@ -71,10 +76,14 @@ class AnimalDetailFragment : Fragment() {
 
     private fun displayProgressBar(isDisplayed: Boolean) {
         Log.i("Debug", "$isDisplayed")
-        binding.progressBar.visibility = if(isDisplayed) View.VISIBLE else View.GONE
+//        binding.progressBar.visibility = if(isDisplayed) View.VISIBLE else View.GONE
     }
 
     private fun appendAnimal(animal: Animal) {
+        Picasso.get()
+            .load(animal.images[0].url)
+            .placeholder(R.drawable.ic_baseline_pets_24)
+            .into(binding.imageSlider)
         binding.name.text = animal.name
         binding.breed.text = animal.breed
         binding.sex.text = animal.sex
@@ -89,8 +98,12 @@ class AnimalDetailFragment : Fragment() {
         }
         binding.age.text = sb.toString()
 
-        binding.urgent.text = animal.urgent
-        binding.height.text = animal.height
+        binding.urgent.text = if (animal.urgent == "true") "Ja" else "Nee"
+
+        sb.setLength(0)
+        sb.append(animal.height)
+        sb.append(" cm")
+        binding.height.text = sb.toString()
         binding.description.text = animal.description
     }
 

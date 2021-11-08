@@ -1,8 +1,6 @@
 package com.example.petadopt.ui.overview
 
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,19 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
-import com.example.petadopt.R
 import com.example.petadopt.data.domain.Animal
 import com.example.petadopt.data.domain.Animals
-import com.example.petadopt.databinding.FragmentFirstBinding
+import com.example.petadopt.databinding.OverviewFragmentBinding
 import com.example.petadopt.utilities.DataState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.coroutines.CoroutineContext
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -32,7 +22,7 @@ import kotlin.coroutines.CoroutineContext
 @AndroidEntryPoint
 class OverviewFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: OverviewFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding
         get() = _binding!!
@@ -46,7 +36,7 @@ class OverviewFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = OverviewFragmentBinding.inflate(inflater, container, false)
 
 
         listAdapter = OverviewListAdapter(
